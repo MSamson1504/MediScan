@@ -23,6 +23,19 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mediscan.ui.theme.MediScanTheme
+import android.annotation.SuppressLint
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import androidx.fragment.app.FragmentActivity
+import androidx.compose.ui.platform.LocalContext
+import com.google.android.gms.maps.MapView
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +49,7 @@ class MainActivity : ComponentActivity() {
                 // Medication & Symptom logs (demo: keep in memory)
                 var medicationReminders by remember { mutableStateOf(listOf<MedicationReminder>()) }
                 var symptomLogs by remember { mutableStateOf(listOf<SymptomLog>()) }
+//                var findHealthcare by remember { mutableStateOf(listOf<FindHealthcare>()) }
 
                 // Holds selected symptoms passed from SymptomChecker -> PossibleDiagnoses
                 var selectedSymptomsState by remember { mutableStateOf(listOf<String>()) }
@@ -76,6 +90,10 @@ class MainActivity : ComponentActivity() {
                             onAddLog = { log -> symptomLogs = symptomLogs + log },
                             onBack = { currentScreen = Screen.Dashboard }
                         )
+<<<<<<< HEAD
+                        Screen.FindHealthcare -> FindHealthcareScreen(
+                            onBack = { currentScreen = Screen.Dashboard }
+=======
                         Screen.SymptomChecker -> SymptomCheckerScreen(
                             onBack = { currentScreen = Screen.Dashboard },
                             onNext = { selected ->
@@ -86,6 +104,7 @@ class MainActivity : ComponentActivity() {
                         Screen.PossibleDiagnoses -> PossibleDiagnosesScreen(
                             selectedSymptoms = selectedSymptomsState,
                             onBack = { currentScreen = Screen.SymptomChecker }
+>>>>>>> 7ec1503efd6bbb8601d49f6282af3ba25d6b7f1b
                         )
                     }
                 }
@@ -96,7 +115,11 @@ class MainActivity : ComponentActivity() {
 
 enum class Screen {
     Login, Dashboard,
+<<<<<<< HEAD
+    MedicationReminders, SymptomInput, FindHealthcare
+=======
     MedicationReminders, SymptomInput, SymptomChecker, PossibleDiagnoses
+>>>>>>> 7ec1503efd6bbb8601d49f6282af3ba25d6b7f1b
 }
 
 @Composable
@@ -265,7 +288,11 @@ fun DashboardMenuGrid(onNavigate: (Screen) -> Unit) {
     val navMapping = mapOf(
         "Medication Reminders" to Screen.MedicationReminders,
         "Symptom Input" to Screen.SymptomInput,
+<<<<<<< HEAD
+        "Find Healthcare" to Screen.FindHealthcare
+=======
         "Symptom Checker" to Screen.SymptomChecker
+>>>>>>> 7ec1503efd6bbb8601d49f6282af3ba25d6b7f1b
     )
     Column {
         for (row in menuItems.chunked(2)) {
@@ -487,6 +514,44 @@ fun SymptomInputScreen(
     }
 }
 
+<<<<<<< HEAD
+@SuppressLint("MissingPermission")
+@Composable
+fun FindHealthcareScreen(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit = {}
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Header with back button
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+            Text(
+                "Find Healthcare Facilities",
+                fontSize = 20.sp,
+                color = Color(0xFF673AB7),
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Map container
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(12.dp))
+        ) {
+            GoogleMapView()
+=======
 // --- Symptom Checker Feature ---
 @Composable
 fun SymptomCheckerScreen(
@@ -618,10 +683,57 @@ fun SymptomCheckerScreen(
                     Text("Next")
                 }
             }
+>>>>>>> 7ec1503efd6bbb8601d49f6282af3ba25d6b7f1b
         }
     }
 }
 
+<<<<<<< HEAD
+@Composable
+fun GoogleMapView() {
+    val context = LocalContext.current
+
+    AndroidView(
+        factory = { ctx ->
+            MapView(ctx).apply {
+                onCreate(Bundle())
+                getMapAsync { googleMap ->
+                    // Configure the map
+                    googleMap.uiSettings.isZoomControlsEnabled = true
+                    googleMap.uiSettings.isZoomGesturesEnabled = true
+
+                    // Set up initial location (example: San Francisco)
+                    val sanFrancisco = LatLng(37.7749, -122.4194)
+
+//                    // Add markers for healthcare facilities
+//                    val healthcareLocations = listOf(
+//                        LatLng(37.7749, -122.4194) to "General Hospital",
+//                        LatLng(37.7849, -122.4094) to "Community Clinic",
+//                        LatLng(37.7649, -122.4294) to "Urgent Care Center",
+//                        LatLng(37.7799, -122.4394) to "Medical Center"
+//                    )
+//
+//                    healthcareLocations.forEach { (location, title) ->
+//                        googleMap.addMarker(
+//                            MarkerOptions()
+//                                .position(location)
+//                                .title(title)
+//                                .snippet("Healthcare Facility")
+//                        )
+//                    }
+
+                    // Move camera to show the area
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sanFrancisco, 12f))
+                }
+            }
+        },
+        update = { mapView ->
+            mapView.onResume()
+        },
+        modifier = Modifier.fillMaxSize()
+    )
+}
+=======
 // --- Possible Diagnoses Screen (single top-level definition) ---
 @Composable
 fun PossibleDiagnosesScreen(
@@ -838,3 +950,4 @@ fun PossibleDiagnosesScreen(
         }
     }
 }
+>>>>>>> 7ec1503efd6bbb8601d49f6282af3ba25d6b7f1b
