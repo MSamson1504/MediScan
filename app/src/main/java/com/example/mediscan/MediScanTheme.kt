@@ -24,3 +24,4 @@ fun MediScanTheme(
         content = content
     )
 }
+
